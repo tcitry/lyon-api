@@ -157,7 +157,8 @@ func (a *Adaptor) GetRequestURL(info *relaycommon.RelayInfo) (string, error) {
 		// https://github.com/songquanpeng/one-api/issues/67
 		requestURL = fmt.Sprintf("/openai/deployments/%s/%s", model_, task)
 		if info.RelayMode == relayconstant.RelayModeRealtime {
-			requestURL = fmt.Sprintf("/openai/realtime?deployment=%s&api-version=%s", model_, apiVersion)
+			// requestURL = fmt.Sprintf("/openai/realtime?deployment=%s&api-version=%s", model_, apiVersion)
+			requestURL = fmt.Sprintf("/openai/realtime?intent=transcription&api-version=%s", apiVersion)
 		}
 		return relaycommon.GetFullRequestURL(info.ChannelBaseUrl, requestURL, info.ChannelType), nil
 	case constant.ChannelTypeMiniMax:
