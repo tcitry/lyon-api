@@ -44,7 +44,7 @@ services:
       MYSQL_ROOT_PASSWORD: 123456  # Ensure this matches the password in SQL_DSN
       MYSQL_DATABASE: new-api
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_data:/data/mysql
     # ports:
     #   - "3306:3306"  # If you want to access MySQL from outside Docker, uncomment
 
