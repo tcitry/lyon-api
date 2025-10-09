@@ -17,7 +17,7 @@ version: '3.4' # For compatibility with older Docker versions
 services:
   new-api:
     image: lyonapi:latest
-    container_name: new-api
+    container_name: lyonapi
     restart: always
     command: --log-dir /app/logs
     ports:
@@ -48,12 +48,12 @@ services:
 
   redis:
     image: redis:latest
-    container_name: new-api-redis
+    container_name: lyonapi-redis
     restart: always
 
   postgres:
     image: postgres:15
-    container_name: new-api-postgres
+    container_name: lyonapi-postgres
     restart: always
     environment:
       POSTGRES_USER: root
