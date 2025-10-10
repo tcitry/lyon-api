@@ -17,7 +17,7 @@ version: '3.4' # For compatibility with older Docker versions
 services:
   new-api:
     image: lyonapi:latest
-    container_name: new-api
+    container_name: lyonapi
     restart: always
     command: --log-dir /app/logs
     ports:
@@ -26,8 +26,8 @@ services:
       - ./data:/data
       - ./logs:/app/logs
     environment:
-      - SQL_DSN=postgresql://root:123456@postgres:5432/new-api # ⚠️ IMPORTANT: Change the password in production!
-#      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service, uncomment if using MySQL
+      # - SQL_DSN=postgresql://root:123456@postgres:5432/new-api # ⚠️ IMPORTANT: Change the password in production!
+      - SQL_DSN=root:123456@tcp(mysql:3306)/new-api  # Point to the mysql service, uncomment if using MySQL
       - REDIS_CONN_STRING=redis://redis
       - TZ=Asia/Shanghai
       - ERROR_LOG_ENABLED=true # 是否启用错误日志记录
@@ -38,8 +38,9 @@ services:
 
     depends_on:
       - redis
-      - postgres
-#      - mysql  # Uncomment if using MySQL
+      - mysql
+      # - postgres
+  
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O - http://localhost:3000/api/status | grep -o '\"success\":\\s*true' || exit 1"]
       interval: 30s
@@ -48,34 +49,34 @@ services:
 
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: lyonapi-redis
     restart: always
 
-  postgres:
-    image: postgres:15
-    container_name: postgres
+  # postgres:
+  #   image: postgres:15
+  #   container_name: lyonapi-postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: root
+  #     POSTGRES_PASSWORD: 123456  # ⚠️ IMPORTANT: Change this password in production!
+  #     POSTGRES_DB: new-api
+  #   volumes:
+  #     - /data/new-api/pg:/var/lib/postgresql/data
+    # ports:
+      # - "5432:5432"  # Uncomment if you need to access PostgreSQL from outside Docker
+
+  mysql:
+    image: mysql:8.2
+    container_name: lyonapi-mysql
     restart: always
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: 123456  # ⚠️ IMPORTANT: Change this password in production!
-      POSTGRES_DB: new-api
+      MYSQL_ROOT_PASSWORD: 123456  # ⚠️ IMPORTANT: Change this password in production!
+      MYSQL_DATABASE: new-api
     volumes:
-      - pg_data:/var/lib/postgresql/data
-#    ports:
-#      - "5432:5432"  # Uncomment if you need to access PostgreSQL from outside Docker
+      - /data/new-api/mysql:/var/lib/mysql
+    # ports:
+    #   - "3306:3306"  # Uncomment if you need to access MySQL from outside Docker
 
-#  mysql:
-#    image: mysql:8.2
-#    container_name: mysql
-#    restart: always
-#    environment:
-#      MYSQL_ROOT_PASSWORD: 123456  # ⚠️ IMPORTANT: Change this password in production!
-#      MYSQL_DATABASE: new-api
-#    volumes:
-#      - mysql_data:/var/lib/mysql
-#    ports:
-#      - "3306:3306"  # Uncomment if you need to access MySQL from outside Docker
-
-volumes:
-  pg_data:
-#  mysql_data:
+# volumes:
+  # pg_data:
+  # mysql_data:

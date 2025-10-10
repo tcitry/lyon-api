@@ -157,7 +157,12 @@ func (a *Adaptor) GetRequestURL(info *relaycommon.RelayInfo) (string, error) {
 		// https://github.com/songquanpeng/one-api/issues/67
 		requestURL = fmt.Sprintf("/openai/deployments/%s/%s", model_, task)
 		if info.RelayMode == relayconstant.RelayModeRealtime {
-			requestURL = fmt.Sprintf("/openai/realtime?deployment=%s&api-version=%s", model_, apiVersion)
+			// https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/real-time-speech-transcription-with-gpt-4o-transcribe-and-gpt-4o-mini-transcribe/4410353
+			if strings.Contains(requestURL, "transcribe") {
+				requestURL = fmt.Sprintf("/openai/realtime?intent=transcription&api-version=%s", apiVersion)
+			} else {
+				requestURL = fmt.Sprintf("/openai/realtime?deployment=%s&api-version=%s", model_, apiVersion)
+			}
 		}
 		return relaycommon.GetFullRequestURL(info.ChannelBaseUrl, requestURL, info.ChannelType), nil
 	case constant.ChannelTypeMiniMax:
